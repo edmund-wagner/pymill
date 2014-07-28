@@ -426,13 +426,30 @@ class Pymill(object):
         """
         return self._api_call("https://api.paymill.com/v2/transactions/" + str(transaction_id), return_type=Transaction)
 
-    def get_transactions(self):
-        """List all transactions.
+    def get_transactions(self, client=None, payment=None, amount=None, description=None, created_at=None, updated_at=None, status=None):
+        """List transactions.
+
+        :param client: the client id
+        :type client: str
+        :param payment: payment id
+        :type payment: str
+        :param amount: amount=[>|<]<integer> e.g. “300” or with prefix: “>300” or “<300”
+        :type amount: str
+        :param description: the description
+        :type description: str
+        :param created_at: <unix timestamp > | <unix timestamp (from)>-<unix timestamp (to)>
+        :type created_at: str
+        :param updated_at: <unix timestamp > | <unix timestamp (from)>-<unix timestamp (to)>
+        :type updated_at: str
+        :param status: the status filter (open, closed, failed, preauth, pending, refunded partially_refunded chargeback)
+        :type status: str
 
         :Returns:
             a dict with a member "data" which is an array of dicts, each representing a transaction
         """
-        return self._api_call("https://api.paymill.com/v2/transactions/", return_type=Transaction)
+        params = dict_without_none(client=client, payment=payment, amount=amount, description=description, created_at=created_at, updated_at=updated_at, status=status)
+
+        return self._api_call("https://api.paymill.com/v2/transactions/", params=params, return_type=Transaction)
 
     def refund(self, transaction_id, amount, description=None):
         """Refunds an already performed transaction.
